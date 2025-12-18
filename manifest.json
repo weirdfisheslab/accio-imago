@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Hover Highlighter",
+  "version": "1.0.2",
+  "description": "Highlights the element under the cursor.",
+  "permissions": [
+    "scripting"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {},
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ],
+  "background": {
+    "service_worker": "sw.js"
+  },
+  "commands": {
+    "toggle-highlight": {
+      "suggested_key": {
+        "default": "Alt+H"
+      },
+      "description": "Toggle hover highlighting"
+    }
+  }
+}
