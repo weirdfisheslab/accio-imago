@@ -55,7 +55,9 @@ A Chrome Extension to download high-quality images from Google Slides with ease.
 - `popup.js` - Popup logic and Google Slides URL validation
 - `content.js` - Main content script (image detection, highlighting, downloads)
 - `sw.js` - Service worker (handles non-filesystem URL downloads)
-- `README.md` - Documentation
+- `build.sh` - Script to create distribution zip file
+- `README.md` - User documentation
+- `agent.md` - Developer/agent guide with detailed architecture and technical information
 
 ### Key Components
 
@@ -77,6 +79,23 @@ A Chrome Extension to download high-quality images from Google Slides with ease.
 - Removes all event listeners
 - Hides overlay and stop button
 - Resets extension state
+
+### Building & Distribution
+
+To create a distribution zip file for the Chrome Extension:
+
+```bash
+./build.sh
+```
+
+This creates `accio-imago-extension.zip` containing only the essential extension files:
+- `content.js`
+- `manifest.json` 
+- `popup.html`
+- `popup.js`
+- `sw.js`
+
+The script automatically excludes documentation files (`README.md`, `agent.md`) and other non-essential files.
 
 ## Future Improvements
 
