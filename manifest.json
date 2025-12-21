@@ -37,5 +37,11 @@
       },
       "description": "Toggle image highlighting and download mode"
     }
+  },
+  "externally_connectable": {
+    "matches": [
+      "https://*.lovable.app/*",
+      "http://localhost/*"
+    ]
   }
 }
