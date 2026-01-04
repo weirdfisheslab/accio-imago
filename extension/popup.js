@@ -5,17 +5,23 @@ const activeState = document.getElementById('activeState');
 const sendCodeBtn = document.getElementById('sendCodeBtn');
 const verifyCodeBtn = document.getElementById('verifyCodeBtn');
 const emailInput = document.getElementById('emailInput');
+const emailDisplay = document.getElementById('emailDisplay');
 const codeInput = document.getElementById('codeInput');
 const authMessage = document.getElementById('authMessage');
+const codeSentRow = document.getElementById('codeSentRow');
+const codeSentText = document.getElementById('codeSentText');
+const resetEmailBtn = document.getElementById('resetEmailBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 const authSection = document.getElementById('authSection');
 const userSection = document.getElementById('userSection');
 const billingSection = document.getElementById('billingSection');
 const planStatus = document.getElementById('planStatus');
 const freeStatus = document.getElementById('freeStatus');
-const billingIntervalWrap = document.getElementById('billingIntervalWrap');
-const billingIntervalSelect = document.getElementById('billingInterval');
 const upgradeBtn = document.getElementById('upgradeBtn');
+const upgradeOptions = document.getElementById('upgradeOptions');
+const monthlyBtn = document.getElementById('monthlyBtn');
+const yearlyBtn = document.getElementById('yearlyBtn');
+const cancelUpgradeBtn = document.getElementById('cancelUpgradeBtn');
 const manageBtn = document.getElementById('manageBtn');
 const refreshBtn = document.getElementById('refreshBtn');
 
@@ -26,7 +32,43 @@ const PRODUCT_ID = 'slides_image_downloader';
 const FUNCTIONS_BASE_URL = 'https://tbtnsxerhkpuxufaipdc.supabase.co/functions/v1';
 const SUPABASE_URL = 'https://tbtnsxerhkpuxufaipdc.supabase.co';
 const SUPABASE_ANON_KEY = '';
-const BILLING_INTERVAL_KEY = 'billingInterval';
+const BILLING_INTERVALS = ['monthly', 'yearly'];
+const PENDING_EMAIL_KEY = 'pendingEmail';
+const OTP_SENT_KEY = 'otpSent';
+
+function updateVerifyButtonState() {
+  const code = codeInput.value.trim();
+  verifyCodeBtn.disabled = code.length !== 6;
+}
+
+function setAuthMessage(message) {
+  authMessage.textContent = message;
+  authMessage.classList.toggle('hidden', !message);
+}
+
+function setOtpVisibility(visible) {
+  codeInput.classList.toggle('hidden', !visible);
+  verifyCodeBtn.classList.toggle('hidden', !visible);
+  codeSentRow.classList.toggle('hidden', !visible);
+  emailInput.classList.toggle('hidden', visible);
+  emailDisplay.classList.add('hidden');
+  sendCodeBtn.classList.toggle('hidden', visible);
+  emailInput.disabled = visible;
+  sendCodeBtn.disabled = visible;
+  if (!visible) {
+    codeInput.value = '';
+    updateVerifyButtonState();
+  }
+}
+
+function updateCodeSentText(email) {
+  if (!email) {
+    codeSentText.textContent = 'Code sent';
+    return;
+  }
+  codeSentText.textContent = `Code sent to ${email}`;
+  emailDisplay.textContent = email;
+}
 
 // Get current active tab
 async function getCurrentTab() {
@@ -53,7 +95,6 @@ function getContentStatus(tabId) {
 
 // Check on popup load if we're on a Google Slides page
 async function initializePopup() {
-  await loadBillingInterval();
   await checkLogin();
   const tab = await getCurrentTab();
 
@@ -64,8 +105,10 @@ async function initializePopup() {
 
     const infoSection = document.querySelector('.info-section');
     const warning = document.createElement('div');
+    warning.classList.add('warning-box');
     warning.innerHTML = '<strong>⚠️ Not a Google Slides</strong><br>Open a Google Slides presentation to use this extension.';
     initialState.insertAdjacentElement('beforebegin', warning);
+    initialState.classList.add('hidden');
     return;
   }
 
@@ -133,20 +176,6 @@ async function verifyOtp(email, token) {
   return data;
 }
 
-async function loadBillingInterval() {
-  if (!billingIntervalSelect) return;
-  const { billingInterval } = await chrome.storage.local.get(BILLING_INTERVAL_KEY);
-  if (billingInterval === 'monthly' || billingInterval === 'yearly') {
-    billingIntervalSelect.value = billingInterval;
-  }
-}
-
-if (billingIntervalSelect) {
-  billingIntervalSelect.addEventListener('change', async () => {
-    await chrome.storage.local.set({ [BILLING_INTERVAL_KEY]: billingIntervalSelect.value });
-  });
-}
-
 function setBillingUI({ plan, freeExportsRemaining }) {
   if (!planStatus || !freeStatus) return;
 
@@ -155,13 +184,13 @@ function setBillingUI({ plan, freeExportsRemaining }) {
   if (plan === 'pro') {
     freeStatus.textContent = 'Unlimited exports while active';
     upgradeBtn.classList.add('hidden');
+    upgradeOptions.classList.add('hidden');
     manageBtn.classList.remove('hidden');
-    if (billingIntervalWrap) billingIntervalWrap.classList.add('hidden');
   } else {
     freeStatus.textContent = `Free exports remaining: ${freeExportsRemaining}`;
     upgradeBtn.classList.remove('hidden');
+    upgradeOptions.classList.add('hidden');
     manageBtn.classList.add('hidden');
-    if (billingIntervalWrap) billingIntervalWrap.classList.remove('hidden');
   }
 }
 
@@ -169,8 +198,8 @@ async function refreshEntitlement() {
   planStatus.textContent = 'Checking plan...';
   freeStatus.textContent = '';
   upgradeBtn.classList.add('hidden');
+  upgradeOptions.classList.add('hidden');
   manageBtn.classList.add('hidden');
-  if (billingIntervalWrap) billingIntervalWrap.classList.add('hidden');
 
   const data = await callFunction('validate', { product_id: PRODUCT_ID });
   if (data?.error) {
@@ -204,22 +233,37 @@ async function checkLogin() {
     billingSection.classList.add('hidden');
     initialState.classList.add('hidden');
     activeState.classList.add('hidden');
+    const { pendingEmail, otpSent } = await chrome.storage.local.get([PENDING_EMAIL_KEY, OTP_SENT_KEY]);
+    if (pendingEmail && !emailInput.value) {
+      emailInput.value = pendingEmail;
+    }
+    if (otpSent && pendingEmail) {
+      updateCodeSentText(pendingEmail);
+      setOtpVisibility(true);
+      setAuthMessage('');
+    } else {
+      setOtpVisibility(false);
+      setAuthMessage('Login to enable features');
+    }
   }
 }
 
 sendCodeBtn.addEventListener('click', async () => {
   const email = emailInput.value.trim();
   if (!email) {
-    authMessage.textContent = 'Enter a valid email address.';
+    setAuthMessage('Enter a valid email address.');
     return;
   }
 
-  authMessage.textContent = 'Sending code...';
+  setAuthMessage('Sending code...');
   try {
+    await chrome.storage.local.set({ [PENDING_EMAIL_KEY]: email, [OTP_SENT_KEY]: true });
     await requestOtp(email);
-    authMessage.textContent = 'Check your email for the code.';
+    updateCodeSentText(email);
+    setOtpVisibility(true);
+    setAuthMessage('');
   } catch (error) {
-    authMessage.textContent = error.message || 'Failed to send code.';
+    setAuthMessage(error.message || 'Failed to send code.');
   }
 });
 
@@ -227,20 +271,21 @@ verifyCodeBtn.addEventListener('click', async () => {
   const email = emailInput.value.trim();
   const token = codeInput.value.trim();
   if (!email || !token) {
-    authMessage.textContent = 'Enter email and code.';
+    setAuthMessage('Enter email and code.');
     return;
   }
 
-  authMessage.textContent = 'Verifying...';
+  setAuthMessage('Verifying...');
   try {
     const data = await verifyOtp(email, token);
     await chrome.storage.local.set({
       accessToken: data.access_token
     });
+    await chrome.storage.local.remove([PENDING_EMAIL_KEY, OTP_SENT_KEY]);
     codeInput.value = '';
     await checkLogin();
   } catch (error) {
-    authMessage.textContent = error.message || 'Failed to verify code.';
+    setAuthMessage(error.message || 'Failed to verify code.');
   }
 });
 
@@ -286,16 +331,37 @@ startBtn.addEventListener('click', async () => {
 });
 
 upgradeBtn.addEventListener('click', async () => {
-  const payload = { product_id: PRODUCT_ID };
-  if (billingIntervalSelect?.value) {
-    payload.billing_interval = billingIntervalSelect.value;
+  upgradeBtn.classList.add('hidden');
+  upgradeOptions.classList.remove('hidden');
+});
+
+cancelUpgradeBtn.addEventListener('click', async () => {
+  upgradeOptions.classList.add('hidden');
+  upgradeBtn.classList.remove('hidden');
+});
+
+async function startCheckout(billingInterval) {
+  if (!BILLING_INTERVALS.includes(billingInterval)) {
+    alert('Invalid billing interval');
+    return;
   }
-  const data = await callFunction('create_checkout_session', payload);
+  const data = await callFunction('create_checkout_session', {
+    product_id: PRODUCT_ID,
+    billing_interval: billingInterval
+  });
   if (data?.url) {
     chrome.tabs.create({ url: data.url });
   } else {
     alert(data?.error || 'Unable to start checkout');
   }
+}
+
+monthlyBtn.addEventListener('click', async () => {
+  await startCheckout('monthly');
+});
+
+yearlyBtn.addEventListener('click', async () => {
+  await startCheckout('yearly');
 });
 
 manageBtn.addEventListener('click', async () => {
@@ -314,6 +380,15 @@ refreshBtn.addEventListener('click', async () => {
 stopBtn.addEventListener('click', async () => {
   const tab = await getCurrentTab();
   await stopDownloadMode(tab);
+});
+
+codeInput.addEventListener('input', updateVerifyButtonState);
+
+resetEmailBtn.addEventListener('click', async () => {
+  emailInput.value = '';
+  await chrome.storage.local.remove([PENDING_EMAIL_KEY, OTP_SENT_KEY]);
+  setOtpVisibility(false);
+  setAuthMessage('Login to enable features');
 });
 
 async function stopDownloadMode(tab) {
@@ -357,3 +432,4 @@ function updateUI() {
 
 // Initialize UI and check if on Google Slides
 initializePopup();
+updateVerifyButtonState();

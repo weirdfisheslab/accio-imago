@@ -12,6 +12,12 @@
       background: #f5f5f5;
     }
 
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
     .container {
       padding: 16px;
     }
@@ -75,6 +81,29 @@
       transition: all 0.3s ease;
     }
 
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #fff;
+    }
+
+    .input-field--email {
+      margin-bottom: 8px;
+    }
+
+    .input-field--code {
+      margin: 8px 0;
+    }
+
     .btn-primary {
       background: #00d4ff;
       color: #003a4a;
@@ -118,7 +147,7 @@
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
     .status-text {
@@ -142,22 +171,24 @@
       margin: 0 0 8px 0;
     }
 
-    .plan-label {
-      display: block;
-      font-size: 11px;
-      color: #666;
-      margin: 6px 0 4px 0;
+    .code-sent-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
     }
 
-    .plan-select {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #ddd;
+    .warning-box {
+      margin-top: 12px;
+      padding: 10px 12px;
       border-radius: 6px;
-      font-size: 13px;
-      background: #fff;
-      color: #333;
+      border: 1px solid #f2c94c;
+      background: #fff8e1;
+      color: #5d4b00;
+      font-size: 12px;
+      line-height: 1.4;
     }
+
   </style>
 </head>
 
@@ -169,12 +200,18 @@
     </div>
 
     <div id="authSection" class="button-section hidden">
-      <input id="emailInput" type="email" placeholder="you@example.com"
-        style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; margin-bottom: 8px;" />
+      <input id="emailInput" type="email" placeholder="you@example.com" class="input-field input-field--email" />
+      <p id="emailDisplay" class="status-text hidden" style="margin: 0 0 8px 0; text-align: left;"></p>
       <button class="btn btn-primary" id="sendCodeBtn">Send code</button>
-      <input id="codeInput" type="text" placeholder="6-digit code"
-        style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; margin-top: 8px; margin-bottom: 8px;" />
-      <button class="btn btn-secondary" id="verifyCodeBtn">Verify code</button>
+      <div id="codeSentRow" class="code-sent-row hidden">
+        <p id="codeSentText" class="status-text" style="margin: 0; text-align: left; flex: 1;">Code sent</p>
+        <button id="resetEmailBtn" type="button"
+          style="border: none; background: none; cursor: pointer; color: #999; font-size: 14px; line-height: 1;"
+          aria-label="Change email">×</button>
+      </div>
+      <input id="codeInput" type="text" placeholder="6-digit code" class="input-field input-field--code hidden"
+        inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
+      <button class="btn btn-secondary hidden" id="verifyCodeBtn" disabled>Verify code</button>
       <p class="status-text" id="authMessage">Login to enable features</p>
     </div>
 
@@ -190,14 +227,12 @@
     <div id="billingSection" class="button-section hidden">
       <div class="plan-text" id="planStatus">Checking plan...</div>
       <div class="plan-meta" id="freeStatus"></div>
-      <div id="billingIntervalWrap" class="hidden">
-        <label class="plan-label" for="billingInterval">Billing interval</label>
-        <select id="billingInterval" class="plan-select">
-          <option value="monthly">Monthly</option>
-          <option value="yearly" selected>Yearly</option>
-        </select>
-      </div>
       <button class="btn btn-primary hidden" id="upgradeBtn">Upgrade</button>
+      <div id="upgradeOptions" class="hidden" style="margin-top: 8px;">
+        <button class="btn btn-primary" id="monthlyBtn">Monthly</button>
+        <button class="btn btn-primary" id="yearlyBtn" style="margin-top: 8px;">Yearly</button>
+        <button class="btn btn-secondary" id="cancelUpgradeBtn" style="margin-top: 8px;">Cancel</button>
+      </div>
       <button class="btn btn-secondary hidden" id="manageBtn">Manage subscription</button>
     </div>
 
