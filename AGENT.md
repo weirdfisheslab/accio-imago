@@ -18,18 +18,19 @@ The extension follows Chrome's Manifest V3 architecture with the following main 
 
 ```
 accio-imago/
-├── manifest.json          # Extension configuration and permissions
-├── popup.html            # Extension popup UI (Start/Stop buttons)
-├── popup.js              # Popup logic and URL validation
-├── content.js            # Main content script (image detection, highlighting)
-├── sw.js                 # Service worker (handles downloads)
+├── extension/
+│   ├── manifest.json          # Extension configuration and permissions
+│   ├── popup.html            # Extension popup UI (Start/Stop buttons)
+│   ├── popup.js              # Popup logic and URL validation
+│   ├── content.js            # Main content script (image detection, highlighting)
+│   └── sw.js                 # Service worker (handles downloads)
 ├── build.sh              # Build script to create distribution zip
 └── README.md             # User documentation
 ```
 
 ### Component Architecture
 
-#### 1. **Popup** (`popup.html` + `popup.js`)
+#### 1. **Popup** (`extension/popup.html` + `extension/popup.js`)
 - **Purpose**: Provides the user interface for the extension
 - **Responsibilities**:
   - Displays "Start Download Mode" button
@@ -42,7 +43,7 @@ accio-imago/
   - `verifyAction()`: Sends action data to backend for verification
   - `initializePopup()`: Sets up UI on load
 
-#### 2. **Content Script** (`content.js`)
+#### 2. **Content Script** (`extension/content.js`)
 - **Purpose**: Runs in the context of the web page and handles image detection
 - **Responsibilities**:
   - Creates overlay and stop button UI elements
@@ -62,7 +63,7 @@ accio-imago/
   4. Activates on mousemove listener and monitors for image hovers
   5. Cleans up when stop button is clicked
 
-#### 3. **Service Worker** (`sw.js`)
+#### 3. **Service Worker** (`extension/sw.js`)
 - **Purpose**: Handles downloads for HTTP(S) URLs (filesystem: URLs are handled in content.js)
 - **Responsibilities**:
   - Listens for DOWNLOAD_IMAGE messages from content script
@@ -142,10 +143,10 @@ The extension communicates with a Supabase backend to verify user actions:
 
 ### Adding Features
 
-1. **New UI Elements**: Add to `popup.html` and style in `popup.js`
-2. **Download Behavior**: Modify `downloadImage()` in `content.js` or download handler in `sw.js`
-3. **Image Detection**: Modify `isImage()` in `content.js` to support new element types
-4. **New Messaging**: Define message types in `sw.js` listener and corresponding handlers
+1. **New UI Elements**: Add to `extension/popup.html` and style in `extension/popup.js`
+2. **Download Behavior**: Modify `downloadImage()` in `extension/content.js` or download handler in `extension/sw.js`
+3. **Image Detection**: Modify `isImage()` in `extension/content.js` to support new element types
+4. **New Messaging**: Define message types in `extension/sw.js` listener and corresponding handlers
 
 ### Testing
 
@@ -171,17 +172,17 @@ The extension communicates with a Supabase backend to verify user actions:
 3. Update popup warning message
 
 ### Change Download Behavior
-- Modify `downloadImage()` in `content.js` to customize filename, format, or destination
-- Update service worker message handler in `sw.js` for HTTP(S) downloads
+- Modify `downloadImage()` in `extension/content.js` to customize filename, format, or destination
+- Update service worker message handler in `extension/sw.js` for HTTP(S) downloads
 
 ### Update UI Styling
-- Overlay cyan color: Search for `#00d4ff` in `content.js`
-- Stop button styling: Update stopButton style object in `content.js`
-- Popup colors: Modify CSS in `popup.html`
+- Overlay cyan color: Search for `#00d4ff` in `extension/content.js`
+- Stop button styling: Update stopButton style object in `extension/content.js`
+- Popup colors: Modify CSS in `extension/popup.html`
 
 ### Add Keyboard Shortcuts
 - Edit `commands` section in `manifest.json`
-- Handle keyboard events in `popup.js` or `content.js`
+- Handle keyboard events in `extension/popup.js` or `extension/content.js`
 
 ## Dependencies
 
@@ -201,11 +202,11 @@ The extension communicates with a Supabase backend to verify user actions:
 ```
 
 This script bundles the extension for distribution, creating `accio-imago-extension.zip` with only the essential files:
-- `content.js`
-- `manifest.json`
-- `popup.html`
-- `popup.js`
-- `sw.js`
+- `extension/content.js`
+- `extension/manifest.json`
+- `extension/popup.html`
+- `extension/popup.js`
+- `extension/sw.js`
 
 The script automatically excludes documentation files (`README.md`, `agent.md`) and other non-essential files.
 

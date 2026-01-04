@@ -120,6 +120,20 @@
       margin-top: 8px;
       text-align: center;
     }
+
+    .plan-text {
+      font-size: 12px;
+      color: #444;
+      text-align: center;
+      margin: 8px 0 4px 0;
+    }
+
+    .plan-meta {
+      font-size: 11px;
+      color: #666;
+      text-align: center;
+      margin: 0 0 8px 0;
+    }
   </style>
 </head>
 
@@ -131,16 +145,29 @@
     </div>
 
     <div id="authSection" class="button-section hidden">
-      <button class="btn btn-primary" id="loginBtn">Login</button>
-      <p class="status-text">Login to enable features</p>
+      <input id="emailInput" type="email" placeholder="you@example.com"
+        style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; margin-bottom: 8px;" />
+      <button class="btn btn-primary" id="sendCodeBtn">Send code</button>
+      <input id="codeInput" type="text" placeholder="6-digit code"
+        style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; margin-top: 8px; margin-bottom: 8px;" />
+      <button class="btn btn-secondary" id="verifyCodeBtn">Verify code</button>
+      <p class="status-text" id="authMessage">Login to enable features</p>
     </div>
 
     <div id="userSection" class="hidden" style="margin-bottom: 12px; padding: 0 4px;">
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-size: 12px; color: #666;">Logged in</span>
         <button id="logoutBtn"
           style="border: none; background: none; color: #999; cursor: pointer; font-size: 11px; text-decoration: underline;">Logout</button>
+        <button id="refreshBtn"
+          style="border: none; background: none; color: #999; cursor: pointer; font-size: 11px; text-decoration: underline;">Refresh</button>
       </div>
+    </div>
+
+    <div id="billingSection" class="button-section hidden">
+      <div class="plan-text" id="planStatus">Checking plan...</div>
+      <div class="plan-meta" id="freeStatus"></div>
+      <button class="btn btn-primary hidden" id="upgradeBtn">Upgrade</button>
+      <button class="btn btn-secondary hidden" id="manageBtn">Manage subscription</button>
     </div>
 
     <div id="initialState" class="button-section">

@@ -72,12 +72,3 @@ chrome.commands.onCommand.addListener((cmd) => {
 chrome.action.onClicked.addListener(() => {
   toggleOnActiveTab();
 });
-
-chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
-  if (message.type === 'AUTH_TOKEN') {
-    chrome.storage.local.set({ accessToken: message.token }, () => {
-      console.log('Token stored successfully');
-    });
-    sendResponse({ success: true });
-  }
-});
