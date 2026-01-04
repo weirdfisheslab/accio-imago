@@ -110,7 +110,7 @@ Migrations are stored under `supabase/migrations/`:
 - `supabase/migrations/20241012000200_seed_products.sql` (seed product rows)
 - `supabase/migrations/20241012000300_update_price.sql` (updates Stripe price for product)
 
-Update the seed file with your Stripe Price ID (or set `STRIPE_PRICE_ID` and apply the update migration):
+Update the seed file with your default Stripe Price ID (or set `STRIPE_PRICE_ID` and apply the update migration):
 
 ```
 supabase/migrations/20241012000200_seed_products.sql
@@ -128,7 +128,9 @@ Set these for local development and deployment:
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
 - `SITE_URL`
-- `STRIPE_PRICE_ID`
+- `STRIPE_PRICE_ID` (default/fallback)
+- `STRIPE_PRICE_ID_MONTHLY` (optional)
+- `STRIPE_PRICE_ID_YEARLY` (optional)
 
 ### Supabase CLI (Local Dev)
 
@@ -150,6 +152,9 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 STRIPE_SECRET_KEY=your_stripe_secret_key
 STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 SITE_URL=http://localhost:3000
+STRIPE_PRICE_ID=your_default_stripe_price_id
+STRIPE_PRICE_ID_MONTHLY=your_monthly_stripe_price_id
+STRIPE_PRICE_ID_YEARLY=your_yearly_stripe_price_id
 EOF
 ```
 
@@ -257,7 +262,10 @@ async function consumeExport() {
 }
 
 async function startCheckout() {
-  const { url } = await callFunction("create_checkout_session", { product_id: PRODUCT_ID });
+  const { url } = await callFunction("create_checkout_session", {
+    product_id: PRODUCT_ID,
+    billing_interval: "monthly", // or "yearly"
+  });
   chrome.tabs.create({ url });
 }
 

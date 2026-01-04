@@ -13,6 +13,8 @@ const userSection = document.getElementById('userSection');
 const billingSection = document.getElementById('billingSection');
 const planStatus = document.getElementById('planStatus');
 const freeStatus = document.getElementById('freeStatus');
+const billingIntervalWrap = document.getElementById('billingIntervalWrap');
+const billingIntervalSelect = document.getElementById('billingInterval');
 const upgradeBtn = document.getElementById('upgradeBtn');
 const manageBtn = document.getElementById('manageBtn');
 const refreshBtn = document.getElementById('refreshBtn');
@@ -24,6 +26,7 @@ const PRODUCT_ID = 'slides_image_downloader';
 const FUNCTIONS_BASE_URL = 'https://tbtnsxerhkpuxufaipdc.supabase.co/functions/v1';
 const SUPABASE_URL = 'https://tbtnsxerhkpuxufaipdc.supabase.co';
 const SUPABASE_ANON_KEY = '';
+const BILLING_INTERVAL_KEY = 'billingInterval';
 
 // Get current active tab
 async function getCurrentTab() {
@@ -50,6 +53,7 @@ function getContentStatus(tabId) {
 
 // Check on popup load if we're on a Google Slides page
 async function initializePopup() {
+  await loadBillingInterval();
   await checkLogin();
   const tab = await getCurrentTab();
 
@@ -129,6 +133,20 @@ async function verifyOtp(email, token) {
   return data;
 }
 
+async function loadBillingInterval() {
+  if (!billingIntervalSelect) return;
+  const { billingInterval } = await chrome.storage.local.get(BILLING_INTERVAL_KEY);
+  if (billingInterval === 'monthly' || billingInterval === 'yearly') {
+    billingIntervalSelect.value = billingInterval;
+  }
+}
+
+if (billingIntervalSelect) {
+  billingIntervalSelect.addEventListener('change', async () => {
+    await chrome.storage.local.set({ [BILLING_INTERVAL_KEY]: billingIntervalSelect.value });
+  });
+}
+
 function setBillingUI({ plan, freeExportsRemaining }) {
   if (!planStatus || !freeStatus) return;
 
@@ -138,10 +156,12 @@ function setBillingUI({ plan, freeExportsRemaining }) {
     freeStatus.textContent = 'Unlimited exports while active';
     upgradeBtn.classList.add('hidden');
     manageBtn.classList.remove('hidden');
+    if (billingIntervalWrap) billingIntervalWrap.classList.add('hidden');
   } else {
     freeStatus.textContent = `Free exports remaining: ${freeExportsRemaining}`;
     upgradeBtn.classList.remove('hidden');
     manageBtn.classList.add('hidden');
+    if (billingIntervalWrap) billingIntervalWrap.classList.remove('hidden');
   }
 }
 
@@ -150,6 +170,7 @@ async function refreshEntitlement() {
   freeStatus.textContent = '';
   upgradeBtn.classList.add('hidden');
   manageBtn.classList.add('hidden');
+  if (billingIntervalWrap) billingIntervalWrap.classList.add('hidden');
 
   const data = await callFunction('validate', { product_id: PRODUCT_ID });
   if (data?.error) {
@@ -265,7 +286,11 @@ startBtn.addEventListener('click', async () => {
 });
 
 upgradeBtn.addEventListener('click', async () => {
-  const data = await callFunction('create_checkout_session', { product_id: PRODUCT_ID });
+  const payload = { product_id: PRODUCT_ID };
+  if (billingIntervalSelect?.value) {
+    payload.billing_interval = billingIntervalSelect.value;
+  }
+  const data = await callFunction('create_checkout_session', payload);
   if (data?.url) {
     chrome.tabs.create({ url: data.url });
   } else {

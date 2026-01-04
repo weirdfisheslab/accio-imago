@@ -134,6 +134,23 @@
       text-align: center;
       margin: 0 0 8px 0;
     }
+
+    .plan-label {
+      display: block;
+      font-size: 11px;
+      color: #666;
+      margin: 6px 0 4px 0;
+    }
+
+    .plan-select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      background: #fff;
+      color: #333;
+    }
   </style>
 </head>
 
@@ -165,6 +182,13 @@
     <div id="billingSection" class="button-section hidden">
       <div class="plan-text" id="planStatus">Checking plan...</div>
       <div class="plan-meta" id="freeStatus"></div>
+      <div id="billingIntervalWrap" class="hidden">
+        <label class="plan-label" for="billingInterval">Billing interval</label>
+        <select id="billingInterval" class="plan-select">
+          <option value="monthly">Monthly</option>
+          <option value="yearly" selected>Yearly</option>
+        </select>
+      </div>
       <button class="btn btn-primary hidden" id="upgradeBtn">Upgrade</button>
       <button class="btn btn-secondary hidden" id="manageBtn">Manage subscription</button>
     </div>
