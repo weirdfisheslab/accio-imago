@@ -2,6 +2,9 @@
 if (!window.__HH_INSTALLED__) {
   window.__HH_INSTALLED__ = true;
 
+  const PRODUCT_ID = 'slides_image_downloader';
+  const FUNCTIONS_BASE_URL = 'https://tbtnsxerhkpuxufaipdc.supabase.co/functions/v1';
+
   const overlay = document.createElement('div');
   Object.assign(overlay.style, {
     position: 'fixed',
@@ -62,10 +65,10 @@ if (!window.__HH_INSTALLED__) {
   });
   document.documentElement.appendChild(stopButton);
 
-
   let enabled = false;
   let rafId = null;
   let currentImageEl = null;
+  let downloadLocked = false;
 
   // Cleanup function
   function cleanup() {
@@ -152,7 +155,7 @@ if (!window.__HH_INSTALLED__) {
   window.addEventListener('resize', onScrollOrResize, { passive: true });
 
   // Add click handler for image downloads
-  document.addEventListener('click', (e) => {
+  document.addEventListener('click', async (e) => {
     if (!enabled || !currentImageEl) return;
     
     // Check if we clicked on the current image element
@@ -160,10 +163,25 @@ if (!window.__HH_INSTALLED__) {
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
-      
-      const url = getImageUrl(currentImageEl);
-      if (url) {
-        downloadImage(url, 'slide-image.jpg');
+
+      if (downloadLocked) return;
+      downloadLocked = true;
+
+      try {
+        const allowed = await consumeExport();
+        if (!allowed.allowed) {
+          alert(allowed.reason === 'free_limit_reached'
+            ? 'Free export limit reached. Open the extension to upgrade.'
+            : 'Export not allowed. Please try again.');
+          return;
+        }
+
+        const url = getImageUrl(currentImageEl);
+        if (url) {
+          downloadImage(url, 'slide-image.jpg');
+        }
+      } finally {
+        downloadLocked = false;
       }
     }
   }, true);
@@ -195,6 +213,42 @@ if (!window.__HH_INSTALLED__) {
     }
     
     return null;
+  }
+
+  function getAccessToken() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get('accessToken', (result) => {
+        resolve(result.accessToken);
+      });
+    });
+  }
+
+  async function consumeExport() {
+    const accessToken = await getAccessToken();
+    if (!accessToken) {
+      return { allowed: false, reason: 'not_logged_in' };
+    }
+
+    try {
+      const response = await fetch(`${FUNCTIONS_BASE_URL}/consume_free_export`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ product_id: PRODUCT_ID })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        return { allowed: false, reason: data?.error || 'request_failed' };
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Consume export error:', error);
+      return { allowed: false, reason: 'request_failed' };
+    }
   }
 
   function downloadImage(url, filename) {

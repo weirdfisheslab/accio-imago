@@ -4,6 +4,7 @@
 # Excludes README.md and agent.md files
 
 ZIP_NAME="accio-imago-extension.zip"
+EXTENSION_DIR="extension"
 
 echo "Creating Chrome extension zip: ${ZIP_NAME}"
 
@@ -13,16 +14,13 @@ if [ -f "${ZIP_NAME}" ]; then
     rm "${ZIP_NAME}"
 fi
 
-# Create zip file excluding README.md and agent.md
-zip "${ZIP_NAME}" \
-    content.js \
-    manifest.json \
-    popup.html \
-    popup.js \
-    sw.js \
-    -x "README.md" \
-    -x "agent.md" \
-    -x "build.sh"
+# Create zip file from the extension directory
+zip -j "${ZIP_NAME}" \
+    "${EXTENSION_DIR}/content.js" \
+    "${EXTENSION_DIR}/manifest.json" \
+    "${EXTENSION_DIR}/popup.html" \
+    "${EXTENSION_DIR}/popup.js" \
+    "${EXTENSION_DIR}/sw.js"
 
 echo "✅ Extension zip created successfully: ${ZIP_NAME}"
 echo "📦 Files included:"
