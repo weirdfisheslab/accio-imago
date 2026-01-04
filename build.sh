@@ -20,7 +20,11 @@ zip -j "${ZIP_NAME}" \
     "${EXTENSION_DIR}/manifest.json" \
     "${EXTENSION_DIR}/popup.html" \
     "${EXTENSION_DIR}/popup.js" \
-    "${EXTENSION_DIR}/sw.js"
+    "${EXTENSION_DIR}/sw.js" \
+    "${EXTENSION_DIR}/icons/icon-16.png" \
+    "${EXTENSION_DIR}/icons/icon-32.png" \
+    "${EXTENSION_DIR}/icons/icon-48.png" \
+    "${EXTENSION_DIR}/icons/icon-128.png"
 
 echo "✅ Extension zip created successfully: ${ZIP_NAME}"
 echo "📦 Files included:"
