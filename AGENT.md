@@ -4,7 +4,7 @@ This document describes how AI agents (or developers) can understand and work wi
 
 ## Project Overview
 
-**Accio Imago** is a Chrome Extension that enables users to download high-quality images from Google Slides presentations with a single click. The extension works exclusively on Google Slides and uses smart image detection to identify and highlight SVG image elements.
+**Accio Imago** is a Chrome Extension that enables users to download high-quality images from Google Slides presentations with a single click. The extension works exclusively on Google Slides and uses smart image detection to identify and highlight SVG image elements. The store-facing name is **"Accio Imago - Download images from Google Slides"**.
 
 ### Core Purpose
 
@@ -163,6 +163,11 @@ The extension communicates with a Supabase backend to verify user actions:
 - **Service Worker Logs**: `chrome://extensions/ → Details → "Inspect views" → "service worker"`
 - **Popup Logs**: Click extension icon, right-click popup, select "Inspect popup"
 - **Message Flow**: Check console for message errors during TOGGLE/DOWNLOAD_IMAGE operations
+
+### Supabase + Stripe CLI (Cloud Default)
+
+- Supabase Cloud is the default setup; do not start local Docker services unless explicitly requested.
+- Use the Supabase CLI and Stripe CLI directly with secrets loaded from the root `.env` file.
 
 ## Common Modifications
 
