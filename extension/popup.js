@@ -1,6 +1,5 @@
 const startBtn = document.getElementById('startBtn');
 const stopBtn = document.getElementById('stopBtn');
-const statusBadge = document.getElementById('status');
 const initialState = document.getElementById('initialState');
 const activeState = document.getElementById('activeState');
 const sendCodeBtn = document.getElementById('sendCodeBtn');
@@ -37,6 +36,18 @@ function isGoogleSlidesUrl(url) {
   return url && url.includes('https://docs.google.com/presentation/');
 }
 
+function getContentStatus(tabId) {
+  return new Promise((resolve) => {
+    chrome.tabs.sendMessage(tabId, { type: 'STATUS' }, (response) => {
+      if (chrome.runtime.lastError) {
+        resolve(false);
+        return;
+      }
+      resolve(Boolean(response?.enabled));
+    });
+  });
+}
+
 // Check on popup load if we're on a Google Slides page
 async function initializePopup() {
   await checkLogin();
@@ -51,6 +62,12 @@ async function initializePopup() {
     const warning = document.createElement('div');
     warning.innerHTML = '<strong>⚠️ Not a Google Slides</strong><br>Open a Google Slides presentation to use this extension.';
     initialState.insertAdjacentElement('beforebegin', warning);
+    return;
+  }
+
+  const enabled = await getContentStatus(tab.id);
+  if (enabled) {
+    await stopDownloadMode(tab);
   }
 }
 
@@ -271,6 +288,10 @@ refreshBtn.addEventListener('click', async () => {
 
 stopBtn.addEventListener('click', async () => {
   const tab = await getCurrentTab();
+  await stopDownloadMode(tab);
+});
+
+async function stopDownloadMode(tab) {
   isActive = false;
 
   // Send message to disable and cleanup
@@ -292,7 +313,7 @@ stopBtn.addEventListener('click', async () => {
   }
 
   updateUI();
-});
+}
 
 function updateUI() {
   // If not logged in, UI is handled by checkLogin
@@ -302,15 +323,9 @@ function updateUI() {
     if (isActive) {
       initialState.classList.add('hidden');
       activeState.classList.remove('hidden');
-      statusBadge.textContent = 'ON';
-      statusBadge.classList.remove('inactive');
-      statusBadge.classList.add('active');
     } else {
       initialState.classList.remove('hidden');
       activeState.classList.add('hidden');
-      statusBadge.textContent = 'OFF';
-      statusBadge.classList.remove('active');
-      statusBadge.classList.add('inactive');
     }
   });
 }

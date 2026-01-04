@@ -186,7 +186,7 @@ if (!window.__HH_INSTALLED__) {
     }
   }, true);
 
-  chrome.runtime.onMessage.addListener((msg) => {
+  chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
     if (msg?.type === 'TOGGLE') {
       enabled = !enabled;
       if (enabled) {
@@ -196,6 +196,8 @@ if (!window.__HH_INSTALLED__) {
         overlay.style.display = 'none';
         label.style.display = 'none';
       }
+    } else if (msg?.type === 'STATUS') {
+      sendResponse({ enabled });
     } else if (msg?.type === 'CLEANUP') {
       cleanup();
     }
