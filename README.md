@@ -17,7 +17,7 @@ A Chrome Extension to download high-quality images from Google Slides with ease.
 3. Enable **Developer mode** (toggle in top right)
 4. Click **Load unpacked** and select the extension folder
    - Folder path: `extension/`
-5. The "Accio Imago" extension should now appear in your extensions menu
+5. The "Accio Imago - Download images from Google Slides" extension should now appear in your extensions menu
 
 ## Usage
 
@@ -130,9 +130,11 @@ Set these for local development and deployment:
 - `SITE_URL`
 - `STRIPE_PRICE_ID`
 
-### Supabase CLI (Local Dev)
+### Supabase CLI (Local Dev - Optional)
 
-Initialize and start Supabase locally:
+Local Supabase is optional. For Supabase Cloud, skip this section entirely.
+
+Initialize and start Supabase locally (if needed):
 
 ```bash
 supabase init
@@ -171,7 +173,7 @@ supabase functions deploy stripe_webhook
 
 ### Supabase CLI (Cloud)
 
-If you are using Supabase Cloud, you can skip `supabase start` and apply migrations directly:
+Supabase Cloud is the default for this project. Use the Supabase CLI with secrets from `.env` and skip `supabase start`:
 
 ```bash
 supabase link --project-ref <your-project-ref>
@@ -185,6 +187,8 @@ supabase functions deploy stripe_webhook
 ```
 
 ### Stripe CLI (Webhook Testing)
+
+Load Stripe secrets from `.env` before using the CLI (for example, `export STRIPE_SECRET_KEY=$(grep STRIPE_SECRET_KEY .env | cut -d= -f2-)`).
 
 Forward webhooks to Supabase local edge functions:
 

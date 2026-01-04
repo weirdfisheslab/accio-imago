@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Accio Imago",
+  "name": "Accio Imago - Download images from Google Slides",
   "version": "1.0.0",
   "description": "Download high-quality images from Google Slides with one click.",
   "permissions": [
@@ -14,7 +14,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Accio Imago - Toggle image highlighting",
+    "default_title": "Accio Imago - Download images from Google Slides",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",
