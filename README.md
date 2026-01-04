@@ -109,14 +109,18 @@ Migrations are stored under `supabase/migrations/`:
 - `supabase/migrations/20241012000100_init.sql` (tables, indexes, RLS, RPC)
 - `supabase/migrations/20241012000200_seed_products.sql` (seed product rows)
 - `supabase/migrations/20241012000300_update_price.sql` (updates Stripe price for product)
+- `supabase/migrations/20241012000400_add_product_prices.sql` (optional price mapping table for multiple prices)
 
-Update the seed file with your default Stripe Price ID (or set `STRIPE_PRICE_ID` and apply the update migration):
+Update the seed file with your product ID(s), then map Stripe prices in `product_prices`:
 
 ```
 supabase/migrations/20241012000200_seed_products.sql
 ```
 
-Replace `STRIPE_PRICE_ID_PLACEHOLDER` with your existing Stripe price ID.
+If you offer multiple prices (monthly/yearly) for the same product, use the
+`public.product_prices` table (created by `20241012000400_add_product_prices.sql`)
+to map each Stripe price ID back to a product. This lets the webhook resolve
+admin-side changes even when metadata is missing.
 
 ### Required Environment Variables
 
@@ -128,7 +132,6 @@ Set these for local development and deployment:
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET`
 - `SITE_URL`
-- `STRIPE_PRICE_ID` (default/fallback)
 - `STRIPE_PRICE_ID_MONTHLY` (optional)
 - `STRIPE_PRICE_ID_YEARLY` (optional)
 
@@ -152,7 +155,6 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 STRIPE_SECRET_KEY=your_stripe_secret_key
 STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 SITE_URL=http://localhost:3000
-STRIPE_PRICE_ID=your_default_stripe_price_id
 STRIPE_PRICE_ID_MONTHLY=your_monthly_stripe_price_id
 STRIPE_PRICE_ID_YEARLY=your_yearly_stripe_price_id
 EOF
