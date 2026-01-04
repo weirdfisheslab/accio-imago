@@ -1,0 +1,37 @@
+Accio Imago — Testi per modulo Privacy (Chrome Web Store)
+
+Codice remoto
+- Seleziona: "No, non uso codice remoto"
+- Nota: l'estensione non carica né esegue JS remoto; usa solo chiamate HTTPS alle API Supabase.
+
+Motivazioni autorizzazioni
+- scripting:
+  "Usata per iniettare lo script di contenuto nella scheda attiva quando l’utente avvia la modalità di download su Google Slides. Serve per evidenziare le immagini e abilitare il click per scaricarle."
+
+- storage:
+  "Usata per salvare localmente il token di accesso dell’utente (login via Supabase) e lo stato dell’interfaccia. Nessun dato viene condiviso con terze parti al di fuori delle chiamate esplicite alle API."
+
+- downloads:
+  "Usata per avviare il download dei file immagine quando l’utente clicca su un’immagine nella presentazione."
+
+- autorizzazioni host:
+  "Accesso limitato a https://docs.google.com/presentation/* per rilevare le immagini e a https://tbtnsxerhkpuxufaipdc.supabase.co/* per autenticazione e verifica del piano/permessi."
+
+Selezioni "Utilizzo dei dati" (immagine allegata)
+- Seleziona:
+  - Informazioni che consentono l'identificazione personale (email)
+  - Informazioni di autenticazione (codice OTP e token di accesso)
+- Non selezionare:
+  - Informazioni sanitarie
+  - Dati finanziari e di pagamento
+  - Comunicazioni personali
+  - Posizione
+  - Cronologia web
+  - Attività utente
+  - Contenuti dei siti web
+
+Descrizione del singolo scopo
+"Permette di scaricare immagini da presentazioni Google Slides con un click, evidenziando le immagini e avviando il download solo su richiesta dell’utente."
+
+Descrizione (Dettagli del prodotto)
+"Accio Imago consente di scaricare immagini in alta qualità da Google Slides con un solo click. Attiva la modalità download dal popup, passa il mouse sulle immagini per evidenziarle e clicca per salvarle. Funziona solo su presentazioni Google Slides, non raccoglie dati di navigazione e scarica esclusivamente ciò che l’utente seleziona."
