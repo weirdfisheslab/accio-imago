@@ -130,15 +130,28 @@ async function callFunction(path, body) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
+        'Authorization': `Bearer ${accessToken}`,
+        'apikey': SUPABASE_ANON_KEY
       },
       body: JSON.stringify(body)
     });
 
-    return response.json();
+    const text = await response.text();
+    let data = {};
+    if (text) {
+      try {
+        data = JSON.parse(text);
+      } catch (_error) {
+        data = { error: text };
+      }
+    }
+    if (!response.ok) {
+      return { error: data?.error || data?.message || `Request failed (${response.status})` };
+    }
+    return data;
   } catch (error) {
     console.error('Function error:', error);
-    return { error: 'Request failed' };
+    return { error: error?.message ? `Network error: ${error.message}` : 'Network error' };
   }
 }
 

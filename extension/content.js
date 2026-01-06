@@ -4,6 +4,7 @@ if (!window.__HH_INSTALLED__) {
 
   const PRODUCT_ID = 'slides_image_downloader';
   const FUNCTIONS_BASE_URL = 'https://tbtnsxerhkpuxufaipdc.supabase.co/functions/v1';
+  const SUPABASE_ANON_KEY = '';
 
   const overlay = document.createElement('div');
   Object.assign(overlay.style, {
@@ -104,7 +105,7 @@ if (!window.__HH_INSTALLED__) {
     overlay.style.height = `${Math.round(height)}px`;
 
     currentImageEl = el;
-    label.textContent = el.tagName === 'IMG' ? 'Click to download' : 'Click to open';
+    label.textContent = 'Click to download';
     label.style.display = 'block';
     const lx = Math.round(left);
     const ly = Math.round(top - 20);
@@ -170,9 +171,13 @@ if (!window.__HH_INSTALLED__) {
       try {
         const allowed = await consumeExport();
         if (!allowed.allowed) {
-          alert(allowed.reason === 'free_limit_reached'
+          const reason = allowed.reason || '';
+          const normalizedReason = String(reason).toLowerCase();
+          const message = normalizedReason.includes('free_limit_reached') ||
+              normalizedReason.includes('free export')
             ? 'Free export limit reached. Open the extension to upgrade.'
-            : 'Export not allowed. Please try again.');
+            : 'Export not allowed. Please try again.';
+          alert(message);
           return;
         }
 
@@ -240,7 +245,8 @@ if (!window.__HH_INSTALLED__) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
+          'Authorization': `Bearer ${accessToken}`,
+          'apikey': SUPABASE_ANON_KEY
         },
         body: JSON.stringify({ product_id: PRODUCT_ID })
       });
