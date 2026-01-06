@@ -204,6 +204,10 @@ if (!window.__HH_INSTALLED__) {
   });
 
   function getImageUrl(el) {
+    if (!el) {
+      return null;
+    }
+
     // SVG image elements (Google Slides)
     if (el.tagName === 'image' && el.namespaceURI === 'http://www.w3.org/2000/svg') {
       return el.getAttribute('xlink:href') || el.getAttribute('href');
