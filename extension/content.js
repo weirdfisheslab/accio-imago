@@ -22,6 +22,8 @@ if (!window.__HH_INSTALLED__) {
   const label = document.createElement('div');
   Object.assign(label.style, {
     position: 'fixed',
+    top: '0px',
+    left: '0px',
     font: '12px/1.6 system-ui, sans-serif',
     background: 'rgba(0, 212, 255, 0.95)',
     color: '#fff',
