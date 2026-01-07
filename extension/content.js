@@ -118,7 +118,7 @@ if (!window.__HH_INSTALLED__) {
     // SVG image elements (Google Slides uses these!)
     if (el.tagName === 'image' && el.namespaceURI === 'http://www.w3.org/2000/svg') {
       const href = el.getAttribute('xlink:href') || el.getAttribute('href');
-      return href && href.startsWith('filesystem:');
+      return href && (href.startsWith('filesystem:') || href.startsWith('blob:'));
     }
     
     // HTML IMG tags
@@ -265,7 +265,7 @@ if (!window.__HH_INSTALLED__) {
     }
   }
 
-  function downloadImage(url, filename) {
+  async function downloadImage(url, filename) {
     if (!url) {
       console.error('Could not extract image URL');
       return;
@@ -280,6 +280,22 @@ if (!window.__HH_INSTALLED__) {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+    } else if (url.startsWith('blob:')) {
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.download = filename || 'slide-image.jpg';
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(objectUrl);
+      } catch (error) {
+        console.error('Failed to download blob image:', error);
+      }
     } else {
       // For regular URLs, use the service worker
       chrome.runtime.sendMessage({
