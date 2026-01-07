@@ -35,6 +35,7 @@ const SUPABASE_ANON_KEY = '';
 const BILLING_INTERVALS = ['monthly', 'yearly'];
 const PENDING_EMAIL_KEY = 'pendingEmail';
 const OTP_SENT_KEY = 'otpSent';
+const TOKEN_STORAGE_KEYS = ['accessToken', 'refreshToken', 'expiresAt'];
 
 function updateVerifyButtonState() {
   const code = codeInput.value.trim();
@@ -125,12 +126,28 @@ async function callFunction(path, body) {
     return { error: 'Not logged in' };
   }
 
+  const firstAttempt = await callFunctionWithToken(path, body, accessToken);
+  if (!firstAttempt.authError) {
+    return firstAttempt.data;
+  }
+
+  const refreshed = await refreshAccessToken();
+  if (refreshed?.error) {
+    await chrome.storage.local.remove(TOKEN_STORAGE_KEYS);
+    return { error: 'Session expired. Please log in again.' };
+  }
+
+  const secondAttempt = await callFunctionWithToken(path, body, refreshed.accessToken);
+  return secondAttempt.data;
+}
+
+async function callFunctionWithToken(path, body, token) {
   try {
     const response = await fetch(`${FUNCTIONS_BASE_URL}/${path}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
+        'Authorization': `Bearer ${token}`,
         'apikey': SUPABASE_ANON_KEY
       },
       body: JSON.stringify(body)
@@ -146,11 +163,53 @@ async function callFunction(path, body) {
       }
     }
     if (!response.ok) {
-      return { error: data?.error || data?.message || `Request failed (${response.status})` };
+      const errorMessage = data?.error || data?.message || `Request failed (${response.status})`;
+      const isInvalidJwt = typeof errorMessage === 'string' && errorMessage.includes('Invalid JWT');
+      return {
+        data: { error: errorMessage },
+        authError: response.status === 401 || isInvalidJwt
+      };
     }
-    return data;
+    return { data };
   } catch (error) {
     console.error('Function error:', error);
+    return {
+      data: { error: error?.message ? `Network error: ${error.message}` : 'Network error' },
+      authError: false
+    };
+  }
+}
+
+async function refreshAccessToken() {
+  const { refreshToken } = await chrome.storage.local.get('refreshToken');
+  if (!refreshToken) {
+    return { error: 'Missing refresh token' };
+  }
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY
+      },
+      body: JSON.stringify({ refresh_token: refreshToken })
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      return { error: data?.error_description || data?.msg || 'Failed to refresh session' };
+    }
+
+    await chrome.storage.local.set({
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token || refreshToken,
+      expiresAt: data.expires_in ? Date.now() + data.expires_in * 1000 : null
+    });
+
+    return { accessToken: data.access_token };
+  } catch (error) {
+    console.error('Refresh error:', error);
     return { error: error?.message ? `Network error: ${error.message}` : 'Network error' };
   }
 }
@@ -218,6 +277,9 @@ async function refreshEntitlement() {
   if (data?.error) {
     planStatus.textContent = 'Unable to load plan';
     freeStatus.textContent = data.error;
+    if (data.error === 'Session expired. Please log in again.') {
+      await checkLogin();
+    }
     return;
   }
 
@@ -292,7 +354,9 @@ verifyCodeBtn.addEventListener('click', async () => {
   try {
     const data = await verifyOtp(email, token);
     await chrome.storage.local.set({
-      accessToken: data.access_token
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      expiresAt: data.expires_in ? Date.now() + data.expires_in * 1000 : null
     });
     await chrome.storage.local.remove([PENDING_EMAIL_KEY, OTP_SENT_KEY]);
     codeInput.value = '';
@@ -303,7 +367,7 @@ verifyCodeBtn.addEventListener('click', async () => {
 });
 
 logoutBtn.addEventListener('click', () => {
-  chrome.storage.local.remove(['accessToken'], async () => {
+  chrome.storage.local.remove(TOKEN_STORAGE_KEYS, async () => {
     await checkLogin();
   });
 });
