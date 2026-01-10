@@ -211,10 +211,50 @@ Trigger events for testing:
 stripe trigger checkout.session.completed
 stripe trigger invoice.paid
 stripe trigger invoice.payment_failed
+stripe trigger customer.subscription.created
+stripe trigger customer.subscription.updated
 stripe trigger customer.subscription.deleted
 ```
 
 For a manual test flow, use the extension UI to open a real Checkout session and complete purchase using Stripe test mode.
+
+### Webhook Entitlements Flow
+
+Entitlements are written by the Stripe webhook and read by the extension via the
+`validate` and `consume_free_export` functions. A subscription is treated as
+**pro** when:
+
+- `entitlements.status` is `active` or `trialing`
+- `current_period_end` is in the future
+
+The webhook handles these events:
+
+- `checkout.session.completed`
+- `invoice.paid`
+- `invoice.payment_failed`
+- `customer.subscription.created`
+- `customer.subscription.updated`
+- `customer.subscription.deleted`
+
+On `customer.subscription.created` / `customer.subscription.updated`, the
+webhook upserts entitlements using subscription metadata and the price mapping:
+
+- `metadata.supabase_user_id` (preferred for user resolution)
+- `metadata.product_id` (preferred for product resolution)
+- `product_prices` (fallback via Stripe price ID)
+
+Trialing subscriptions are stored as `plan = pro` and `status = trialing` so the
+extension sees them as active during the trial window.
+
+### Stripe Webhook Signature Verification
+
+The webhook verifies Stripe signatures using the raw request body. Supabase JWT
+verification is disabled for `stripe_webhook` because Stripe does not send a
+Supabase JWT. Deploy with:
+
+```bash
+supabase functions deploy stripe_webhook --no-verify-jwt
+```
 
 To create a webhook endpoint in Stripe:
 
@@ -224,6 +264,8 @@ stripe webhook_endpoints create \
   --enabled-events checkout.session.completed \
   --enabled-events invoice.paid \
   --enabled-events invoice.payment_failed \
+  --enabled-events customer.subscription.created \
+  --enabled-events customer.subscription.updated \
   --enabled-events customer.subscription.deleted
 ```
 
