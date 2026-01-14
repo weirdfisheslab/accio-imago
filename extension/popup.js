@@ -142,3 +142,13 @@ function updateUI() {
 
 // Initialize UI and check if on Google Slides
 initializePopup();
+
+function openFeedback(event) {
+  event.preventDefault();
+  chrome.tabs.create({ url: 'https://forms.gle/YOUR_FEEDBACK_FORM_ID' });
+}
+
+function openSupport(event) {
+  event.preventDefault();
+  chrome.tabs.create({ url: 'https://YOUR_SUPPORT_URL.com' });
+}

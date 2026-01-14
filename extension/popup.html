@@ -137,6 +137,26 @@
       text-align: center;
     }
 
+    .footer-links {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .footer-links a {
+      text-decoration: underline;
+      color: #105C71;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Jost', sans-serif;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: #24CCFB;
+    }
+
   </style>
 </head>
 
@@ -165,6 +185,11 @@
     <div id="initialState" style="margin-top: 8px;">
       <button class="btn btn-primary" id="startBtn">Start Download</button>
     </div>
+  </div>
+
+  <div class="footer-links">
+    <a href="#" onclick="openFeedback(event)">Feedback</a>
+    <a href="#" onclick="openSupport(event)">Support</a>
   </div>
 
   <script src="popup.js"></script>
