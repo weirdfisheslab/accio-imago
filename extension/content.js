@@ -41,27 +41,30 @@ if (!window.__HH_INSTALLED__) {
     position: 'fixed',
     bottom: '20px',
     right: '20px',
-    padding: '12px 16px',
-    background: '#ff3b30',
-    color: '#fff',
+    marginLeft: '32px',
+    marginRight: '32px',
+    padding: '16px 32px',
+    background: '#FB3A31',
+    color: '#ffffff',
     border: 'none',
-    borderRadius: '6px',
+    borderRadius: '24px',
     fontSize: '14px',
-    fontWeight: '600',
+    fontWeight: '500',
     cursor: 'pointer',
     zIndex: '2147483646',
-    boxShadow: '0 4px 12px rgba(255, 59, 48, 0.3)',
+    boxShadow: '0 2px 8px rgba(251, 58, 49, 0.3)',
     display: 'none',
-    fontFamily: 'system-ui, -apple-system, sans-serif'
+    fontFamily: "'Jost', sans-serif",
+    transition: 'all 0.3s ease'
   });
-  stopButton.textContent = '⊘ Stop Download Mode';
+  stopButton.textContent = 'Stop download';
   stopButton.addEventListener('mouseover', () => {
-    stopButton.style.background = '#e63029';
-    stopButton.style.boxShadow = '0 6px 16px rgba(255, 59, 48, 0.4)';
+    stopButton.style.background = '#E03028';
+    stopButton.style.boxShadow = '0 4px 12px rgba(251, 58, 49, 0.4)';
   });
   stopButton.addEventListener('mouseout', () => {
-    stopButton.style.background = '#ff3b30';
-    stopButton.style.boxShadow = '0 4px 12px rgba(255, 59, 48, 0.3)';
+    stopButton.style.background = '#FB3A31';
+    stopButton.style.boxShadow = '0 2px 8px rgba(251, 58, 49, 0.3)';
   });
   stopButton.addEventListener('click', () => {
     cleanup();
