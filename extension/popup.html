@@ -3,13 +3,14 @@
 
 <head>
   <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     body {
-      width: 300px;
+      width: 340px;
       padding: 0;
       margin: 0;
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #f5f5f5;
+      font-family: 'Jost', sans-serif;
+      background: #FFFFFF;
     }
 
     *,
@@ -18,65 +19,49 @@
       box-sizing: border-box;
     }
 
-    .container {
-      padding: 16px;
-    }
-
-    .header {
+    .header-top {
+      background: #F3F3F3;
+      padding: 20px 16px;
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      margin-bottom: 20px;
-      gap: 8px;
+      align-items: center;
+      gap: 16px;
     }
 
-    .header h1 {
+    .logo {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+    }
+
+    .header-top h1 {
       margin: 0;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 600;
       color: #1a1a1a;
     }
 
-    .subtitle {
+    .header-subtitle {
       margin: 0;
-      font-size: 12px;
+      font-size: 13px;
       color: #666;
+      display: block;
     }
 
-    .status-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .status-badge.active {
-      background: #00d4ff;
-      color: #003a4a;
-    }
-
-    .status-badge.inactive {
-      background: #e0e0e0;
-      color: #666;
-    }
-
-    .button-section {
-      background: white;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
-      border: 1px solid #e0e0e0;
+    .container {
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .btn {
       width: 100%;
       padding: 12px 16px;
       border: none;
-      border-radius: 6px;
+      border-radius: 24px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 500;
+      font-family: 'Jost', sans-serif;
       cursor: pointer;
       transition: all 0.3s ease;
     }
@@ -87,26 +72,9 @@
       box-shadow: none;
     }
 
-    .input-field {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 13px;
-      background: #fff;
-    }
-
-    .input-field--email {
-      margin-bottom: 8px;
-    }
-
-    .input-field--code {
-      margin: 8px 0;
-    }
-
     .btn-primary {
       background: #00d4ff;
-      color: #003a4a;
+      color: #FFFFFF;
     }
 
     .btn-primary:hover {
@@ -128,6 +96,13 @@
       background: #d0d0d0;
     }
 
+    .button-section {
+      background: white;
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+    }
+
     .info-section {
       background: white;
       border-radius: 8px;
@@ -146,6 +121,10 @@
       margin: 0;
     }
 
+    .info-section strong {
+      font-weight: 600;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -157,100 +136,33 @@
       text-align: center;
     }
 
-    .plan-text {
-      font-size: 12px;
-      color: #444;
-      text-align: center;
-      margin: 8px 0 4px 0;
-    }
-
-    .plan-meta {
-      font-size: 11px;
-      color: #666;
-      text-align: center;
-      margin: 0 0 8px 0;
-    }
-
-    .code-sent-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .warning-box {
-      margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 6px;
-      border: 1px solid #f2c94c;
-      background: #fff8e1;
-      color: #5d4b00;
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
   </style>
 </head>
 
 <body>
+  <div class="header-top">
+    <img src="logo.png" alt="Accio Imago" class="logo" />
+    <div>
+      <h1>Accio Imago<span class="header-subtitle">Download images from Google Slides</span></h1>
+    </div>
+  </div>
+
   <div class="container">
-    <div class="header">
-      <h1>Accio Imago</h1>
-      <p class="subtitle">Download images from Google Slides</p>
-    </div>
-
-    <div id="authSection" class="button-section hidden">
-      <input id="emailInput" type="email" placeholder="you@example.com" class="input-field input-field--email" />
-      <p id="emailDisplay" class="status-text hidden" style="margin: 0 0 8px 0; text-align: left;"></p>
-      <button class="btn btn-primary" id="sendCodeBtn">Send code</button>
-      <div id="codeSentRow" class="code-sent-row hidden">
-        <p id="codeSentText" class="status-text" style="margin: 0; text-align: left; flex: 1;">Code sent</p>
-        <button id="resetEmailBtn" type="button"
-          style="border: none; background: none; cursor: pointer; color: #999; font-size: 14px; line-height: 1;"
-          aria-label="Change email">×</button>
-      </div>
-      <input id="codeInput" type="text" placeholder="6-digit code" class="input-field input-field--code hidden"
-        inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
-      <button class="btn btn-secondary hidden" id="verifyCodeBtn" disabled>Verify code</button>
-      <p class="status-text" id="authMessage">Login to enable features</p>
-    </div>
-
-    <div id="userSection" class="hidden" style="margin-bottom: 12px; padding: 0 4px;">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <button id="logoutBtn"
-          style="border: none; background: none; color: #999; cursor: pointer; font-size: 11px; text-decoration: underline;">Logout</button>
-        <button id="refreshBtn"
-          style="border: none; background: none; color: #999; cursor: pointer; font-size: 11px; text-decoration: underline;">Refresh</button>
-      </div>
-    </div>
-
-    <div id="billingSection" class="button-section hidden">
-      <div class="plan-text" id="planStatus">Checking plan...</div>
-      <div class="plan-meta" id="freeStatus"></div>
-      <button class="btn btn-primary hidden" id="upgradeBtn">Upgrade</button>
-      <div id="upgradeOptions" class="hidden" style="margin-top: 8px;">
-        <button class="btn btn-primary" id="monthlyBtn">Monthly</button>
-        <button class="btn btn-primary" id="yearlyBtn" style="margin-top: 8px;">Yearly</button>
-        <button class="btn btn-secondary" id="cancelUpgradeBtn" style="margin-top: 8px;">Cancel</button>
-      </div>
-      <button class="btn btn-secondary hidden" id="manageBtn">Manage subscription</button>
-    </div>
 
     <div id="activeState" class="button-section hidden">
       <button class="btn btn-secondary" id="stopBtn">Stop Download Mode</button>
       <p class="status-text">Hover over images and click to download</p>
     </div>
 
-    <div class="info-section">
-      <p><strong>How to use:</strong></p>
-      <p>1. Click "Start Download Mode"</p>
-      <p>2. Hover over images in Google Slides</p>
-      <p>3. Click any image to download</p>
-      <p>4. Click "Stop Download Mode" when done</p>
+    <div style="font-size: 12px; color: #666; line-height: 1.6;">
+      <p style="margin: 0 0 4px 0;">1. Click "Start download"</p>
+      <p style="margin: 0 0 4px 0;">2. Hover over images in Google Slides</p>
+      <p style="margin: 0 0 4px 0;">3. Click any image to download</p>
+      <p style="margin: 0;">4. Click "Stop Download Mode" when done</p>
     </div>
 
-    <div id="initialState" style="margin-top: 12px;">
-      <button class="btn btn-primary" id="startBtn">Start Download Mode</button>
+    <div id="initialState" style="margin-top: 8px;">
+      <button class="btn btn-primary" id="startBtn">Start download</button>
     </div>
   </div>
 
