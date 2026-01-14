@@ -174,18 +174,6 @@ if (!window.__HH_INSTALLED__) {
       downloadLocked = true;
 
       try {
-        const allowed = await consumeExport();
-        if (!allowed.allowed) {
-          const reason = allowed.reason || '';
-          const normalizedReason = String(reason).toLowerCase();
-          const message = normalizedReason.includes('free_limit_reached') ||
-              normalizedReason.includes('free export')
-            ? 'Free export limit reached. Open the extension to upgrade.'
-            : 'Export not allowed. Please try again.';
-          alert(message);
-          return;
-        }
-
         const url = getImageUrl(currentImageEl);
         if (url) {
           downloadImage(url, 'slide-image.jpg');
