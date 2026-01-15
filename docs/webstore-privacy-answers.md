@@ -27,4 +27,4 @@ Since the extension is free and requires no authentication, **no data usage cate
 "Allows users to download images from Google Slides presentations with one click, highlighting images and initiating downloads only when explicitly requested by the user."
 
 ## Product Description (Store Listing Details)
-"Accio Imago enables you to download high-quality images from Google Slides with a single click. Activate download mode from the popup, hover over images to highlight them, and click to save. Works exclusively on Google Slides presentations, collects no user data, and downloads only what you explicitly select."
+"Accio Imago enables you to download high-quality images and GIFs from Google Slides with a single click. Activate download mode from the popup, hover over images to highlight them, and click to save. Works exclusively on Google Slides presentations, collects no user data, and downloads only what you explicitly select."

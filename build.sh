@@ -21,6 +21,7 @@ fi
     "popup.html" \
     "popup.js" \
     "sw.js" \
+    "logo.png" \
     "icons")
 
 echo "✅ Extension zip created successfully: ${ZIP_NAME}"

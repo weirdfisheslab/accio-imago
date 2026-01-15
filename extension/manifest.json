@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Accio Imago - Download images from Google Slides",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Download high-quality images from Google Slides with one click.",
   "permissions": [
     "scripting",
@@ -9,12 +9,8 @@
     "downloads"
   ],
   "host_permissions": [
-    "https://docs.google.com/presentation/*",
-    "https://tbtnsxerhkpuxufaipdc.supabase.co/*"
+    "https://docs.google.com/presentation/*"
   ],
-  "content_security_policy": {
-    "extension_pages": "script-src 'self'; object-src 'self'; connect-src https://tbtnsxerhkpuxufaipdc.supabase.co"
-  },
   "action": {
     "default_popup": "popup.html",
     "default_title": "Accio Imago - Download images from Google Slides",
