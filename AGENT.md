@@ -100,7 +100,7 @@ accio-imago/
    - No new tabs are opened; download happens silently
 
 4. **Deactivation**:
-   - User clicks red "⊘ Stop Download Mode" button
+   - User clicks red "Stop download" button
    - Content script receives STOP message
    - All event listeners removed
    - Overlay, label, and stop button hidden
