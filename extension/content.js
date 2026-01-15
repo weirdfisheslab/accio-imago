@@ -2,9 +2,7 @@
 if (!window.__HH_INSTALLED__ && window === window.top) {
   window.__HH_INSTALLED__ = true;
 
-  const PRODUCT_ID = 'slides_image_downloader';
-  const FUNCTIONS_BASE_URL = 'https://tbtnsxerhkpuxufaipdc.supabase.co/functions/v1';
-  const SUPABASE_ANON_KEY = '';
+  // Extension is now free - no billing/entitlement checks needed
 
   const overlay = document.createElement('div');
   Object.assign(overlay.style, {
@@ -224,42 +222,6 @@ if (!window.__HH_INSTALLED__ && window === window.top) {
     return null;
   }
 
-  function getAccessToken() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get('accessToken', (result) => {
-        resolve(result.accessToken);
-      });
-    });
-  }
-
-  async function consumeExport() {
-    const accessToken = await getAccessToken();
-    if (!accessToken) {
-      return { allowed: false, reason: 'not_logged_in' };
-    }
-
-    try {
-      const response = await fetch(`${FUNCTIONS_BASE_URL}/consume_free_export`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-          'apikey': SUPABASE_ANON_KEY
-        },
-        body: JSON.stringify({ product_id: PRODUCT_ID })
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        return { allowed: false, reason: data?.error || 'request_failed' };
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Consume export error:', error);
-      return { allowed: false, reason: 'request_failed' };
-    }
-  }
 
   async function downloadImage(url, filename) {
     if (!url) {
