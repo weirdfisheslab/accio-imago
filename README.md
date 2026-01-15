@@ -7,17 +7,30 @@ A Chrome Extension to download high-quality images from Google Slides with ease.
 - **Google Slides only**: Works exclusively on Google Slides presentations
 - **Smart image detection**: Automatically detects SVG image elements used by Google Slides
 - **One-click download**: Hover over images and click to download high-quality deeplinks
+- **GIF support**: Downloads GIFs and animated images, unlike other extensions that only handle static images
 - **Persistent stop button**: Always visible so you can stop at any time
 - **Clean workflow**: Automatically injects and cleans up when done
 
 ## Installation
 
-1. Clone or download this repository
-2. Open Chrome and navigate to `chrome://extensions/`
-3. Enable **Developer mode** (toggle in top right)
-4. Click **Load unpacked** and select the extension folder
-   - Folder path: `extension/`
-5. The "Accio Imago - Download images from Google Slides" extension should now appear in your extensions menu
+You can install Accio Imago in two ways:
+
+### Option 1: Install from Chrome Web Store (Recommended)
+
+1. Visit the [Chrome Web Store page](https://chromewebstore.google.com/detail/accio-imago-download-imag/geiiegcdagboeemhdlombhmapghbfbce)
+2. Click **"Add to Chrome"**
+3. Confirm the installation in the popup dialog
+4. The extension will be automatically installed and ready to use
+
+### Option 2: Install from Zip File (Manual Installation)
+
+1. Download the `accio-imago-extension.zip` file from this repository
+2. Extract the zip file to a folder on your computer
+3. Open Chrome and navigate to `chrome://extensions/`
+4. Enable **Developer mode** (toggle in the top right corner)
+5. Click **"Load unpacked"** button
+6. Select the extracted folder (the folder containing `manifest.json`, `popup.html`, etc.)
+7. The "Accio Imago - Download images from Google Slides" extension should now appear in your extensions menu
 
 ## Usage
 
@@ -36,6 +49,7 @@ A Chrome Extension to download high-quality images from Google Slides with ease.
 - **Popup auto-closes**: After clicking "Start", the popup closes so you have full screen access
 - **Persistent stop button**: Red button in bottom-right corner is always visible while downloading
 - **Direct downloads**: High-quality image deeplinks download directly to your Downloads folder
+- **GIF support**: Unlike other extensions, Accio Imago can download GIFs and animated images from Google Slides
 - **No tab clutter**: Downloads happen in the background without opening new tabs
 
 ## How It Works
@@ -83,20 +97,22 @@ A Chrome Extension to download high-quality images from Google Slides with ease.
 
 ### Building & Distribution
 
-To create a distribution zip file for the Chrome Extension:
+To create a distribution zip file for manual installation:
 
 ```bash
 ./build.sh
 ```
 
 This creates `accio-imago-extension.zip` containing only the essential extension files:
-- `extension/content.js`
-- `extension/manifest.json`
-- `extension/popup.html`
-- `extension/popup.js`
-- `extension/sw.js`
+- `content.js`
+- `manifest.json`
+- `popup.html`
+- `popup.js`
+- `sw.js`
+- `logo.png`
+- `icons/` (all icon files)
 
-The script automatically excludes documentation files (`README.md`, `agent.md`) and other non-essential files.
+The zip file can be used for manual installation (see [Installation - Option 2](#option-2-install-from-zip-file-manual-installation) above). The script automatically excludes documentation files (`README.md`, `AGENT.md`) and other non-essential files.
 
 ## Monetization (Supabase + Stripe)
 
