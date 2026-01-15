@@ -152,3 +152,8 @@ function openSupport(event) {
   event.preventDefault();
   chrome.tabs.create({ url: 'https://YOUR_SUPPORT_URL.com' });
 }
+
+document.getElementById('reviewLink').addEventListener('click', (event) => {
+  event.preventDefault();
+  chrome.tabs.create({ url: 'https://chromewebstore.google.com/detail/accio-imago-download-imag/geiiegcdagboeemhdlombhmapghbfbce' });
+});

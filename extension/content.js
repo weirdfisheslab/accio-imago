@@ -9,8 +9,9 @@ if (!window.__HH_INSTALLED__) {
   const overlay = document.createElement('div');
   Object.assign(overlay.style, {
     position: 'fixed',
-    border: '3px solid #00d4ff',
-    boxShadow: '0 0 10px rgba(0, 212, 255, 0.5)',
+    border: '3px solid #24CCFB',
+    boxShadow: '0 0 10px rgba(36, 204, 251, 0.5)',
+    backgroundColor: 'rgba(36, 204, 251, 0.2)',
     pointerEvents: 'none',
     zIndex: '2147483647',
     top: '0px', left: '0px', width: '0px', height: '0px',
