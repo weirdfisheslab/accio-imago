@@ -1,5 +1,5 @@
 // Create overlay once. Uses pointer-events:none so it never captures the mouse.
-if (!window.__HH_INSTALLED__) {
+if (!window.__HH_INSTALLED__ && window === window.top) {
   window.__HH_INSTALLED__ = true;
 
   const PRODUCT_ID = 'slides_image_downloader';
@@ -83,10 +83,15 @@ if (!window.__HH_INSTALLED__) {
     overlay.style.display = 'none';
     label.style.display = 'none';
     stopButton.style.display = 'none';
-    document.removeEventListener('mousemove', onMove);
-    window.removeEventListener('scroll', onScrollOrResize);
-    window.removeEventListener('resize', onScrollOrResize);
   }
+
+  const onKeyUp = (e) => {
+    if (enabled && e.key === 'Escape') {
+      e.stopPropagation();
+      e.preventDefault();
+      cleanup();
+    }
+  };
 
   function rectOf(el) {
     const r = el.getBoundingClientRect();
@@ -160,6 +165,7 @@ if (!window.__HH_INSTALLED__) {
   document.addEventListener('mousemove', onMove, { passive: true });
   window.addEventListener('scroll', onScrollOrResize, { passive: true });
   window.addEventListener('resize', onScrollOrResize, { passive: true });
+  document.addEventListener('keyup', onKeyUp, { capture: true });
 
   // Add click handler for image downloads
   document.addEventListener('click', async (e) => {
@@ -191,9 +197,7 @@ if (!window.__HH_INSTALLED__) {
       if (enabled) {
         stopButton.style.display = 'block';
       } else {
-        stopButton.style.display = 'none';
-        overlay.style.display = 'none';
-        label.style.display = 'none';
+        cleanup();
       }
     } else if (msg?.type === 'STATUS') {
       sendResponse({ enabled });
@@ -306,8 +310,7 @@ if (!window.__HH_INSTALLED__) {
     if (e?.data?.type === 'HH_TOGGLE') {
       enabled = !enabled;
       if (!enabled) {
-        overlay.style.display = 'none';
-        label.style.display = 'none';
+        cleanup();
       }
     }
   });

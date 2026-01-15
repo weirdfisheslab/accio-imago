@@ -113,19 +113,6 @@ async function stopDownloadMode(tab) {
     chrome.runtime.lastError; // ignore errors
   });
 
-  // Remove content script by reloading it (or sending cleanup message)
-  try {
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id, allFrames: true },
-      function: () => {
-        // Remove the installed flag so script can be re-injected if needed
-        window.__HH_INSTALLED__ = false;
-      }
-    });
-  } catch (error) {
-    console.debug('Cleanup error:', error);
-  }
-
   updateUI();
 }
 
