@@ -3,6 +3,7 @@
 Last updated: 2025-01-01
 
 Accio Imago is a Chrome Extension that helps users download images from Google Slides. This policy explains what data is collected and how it is used.
+This extension is open source. The source code is publicly available, allowing transparency and community review of all functionality and data handling practices.
 
 ## Data We Collect
 - **Email address**: used for login (OTP) via Supabase.

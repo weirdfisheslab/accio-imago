@@ -1,5 +1,8 @@
 # Accio Imago — Chrome Web Store Privacy Form Answers
 
+## Open Source
+This extension is open source. The source code is publicly available, allowing transparency and community review of all functionality and data handling practices.
+
 ## Remote Code
 - **Select**: "No, I do not use remote code"
 - **Note**: The extension does not load or execute remote JavaScript. It operates entirely locally in the browser.
