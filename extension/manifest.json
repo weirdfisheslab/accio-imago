@@ -5,7 +5,6 @@
   "description": "Download high-quality images from Google Slides with one click.",
   "permissions": [
     "scripting",
-    "storage",
     "downloads"
   ],
   "host_permissions": [
